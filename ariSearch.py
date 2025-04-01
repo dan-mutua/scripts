@@ -2,7 +2,6 @@ import requests
 import pandas as pd
 import colorama
 from colorama import Fore, Style
-import json
 import socket
 from datetime import datetime as dt
 import time
@@ -40,9 +39,7 @@ def whois_lookup(ip):
 
 def check_ip_ownership(ip):
     try:
-        # Check cache first
-        if ip in ip_cache:
-            print(f"Using cached result for IP {ip}")
+        if ip in ip_cache:           
             return ip_cache[ip]
             
         # try REST API
@@ -58,12 +55,11 @@ def check_ip_ownership(ip):
                 for entity in json_data['entities']:
                     if 'handle' in entity:
                         name = entity['handle'].upper()
-                        if name in ['MSFT', 'AKIMAAI']:
+                        if name in ['MSFT', 'AKAMAI']:
                             result = 'Pass'
                             break
         
         if result == 'Fail':
-            # try WHOIS
             whois_response = whois_lookup(ip)
             if whois_response:
                 #print(f"\nWHOIS Response for IP {ip}:")
@@ -71,7 +67,6 @@ def check_ip_ownership(ip):
                 if 'MSFT' in whois_response.upper() or 'AKAMAI' in whois_response.upper():
                     result = 'Pass'
         
-        # Cache the result
         ip_cache[ip] = result
         return result
     
@@ -82,11 +77,7 @@ def check_ip_ownership(ip):
 df['arinResult'] = df['x-hostip'].apply(check_ip_ownership)
 
 #print
-for i, (ip, result) in enumerate(zip(df['x-hostip'].head(20), df['arinResult'].head(20))):
-    if result == 'Pass':
-        print(f"{ip}: {Fore.GREEN}{result}{Style.RESET_ALL}")
-    else:
-        print(f"{ip}: {Fore.RED}{result}{Style.RESET_ALL}")
+
 
 pass_count = (df['arinResult'] == 'Pass').sum()
 fail_count = (df['arinResult'] == 'Fail').sum()

@@ -21,7 +21,6 @@ def update_zap_path(zap_path):
 
 def run_script(script_name, file_path=None):
     """Run a Python script and return success status"""
-    print("wait for magic to happen......")
     print(f"\nRunning {script_name}...")
     cmd = [sys.executable, script_name]
     if file_path:
@@ -34,7 +33,7 @@ def run_script(script_name, file_path=None):
 
 def main():
     root = tk.Tk()
-    root.title("ZAP Analysis Tool")
+    root.title("Fiddler Tool")
     root.geometry("400x200")
     
     label = tk.Label(root, text="Please select your .zap file to begin analysis:")
