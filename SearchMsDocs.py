@@ -2,11 +2,14 @@ import requests
 import pandas as pd
 import colorama
 from colorama import Fore, Style
+import urllib3
+
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 colorama.init()
 
 url = "https://endpoints.office.com/endpoints/worldwide?clientrequestid=b10c5ed1-bad1-445f-b386-b919946339a7"
-response = requests.get(url)
+response = requests.get(url, verify=False)  # Disable SSL verification
 data = response.json()
 
 urls = [item['urls'] for item in data if 'urls' in item]
@@ -16,7 +19,13 @@ flat_urls = [url.lower() for sublist in urls for url in sublist]
 print(f"Total URLs fetched: {len(flat_urls)}")
 
 excel_path = r"C:\scripts\filtered_results.xlsx"
-df = pd.read_excel(excel_path)
+try:
+    df = pd.read_excel(excel_path)
+except FileNotFoundError:
+    print(f"Excel file not found at {excel_path}. Creating a new file...")
+    df = pd.DataFrame(columns=['https-client-snihostname'])
+    df.to_excel(excel_path, index=False)
+    print(f"Created new Excel file at {excel_path}")
 
 def check_hostname(hostname):
     if not isinstance(hostname, str):
@@ -45,8 +54,6 @@ def check_hostname(hostname):
     return 'Fail'
 
 df['msDocsResult'] = df['https-client-snihostname'].apply(check_hostname)
-
-
 
 pass_count = (df['msDocsResult'] == 'Pass').sum()
 fail_count = (df['msDocsResult'] == 'Fail').sum()
