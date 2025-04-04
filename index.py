@@ -45,24 +45,30 @@ def parse_index_file(index_file_path):
     return results
 
 def main(saz_file_path):
-    extract_to_folder = 'extracted_files'
+    extract_to_folder = os.path.join(os.path.dirname(__file__), '..', 'data', 'extracted_files')
+    output_dir = os.path.join(os.path.dirname(__file__), '..', 'data', 'output')
     
-    # Create folder if it doesn't exist
-    if not os.path.exists(extract_to_folder):
-        os.makedirs(extract_to_folder)
+    # Create folders if they don't exist
+    os.makedirs(extract_to_folder, exist_ok=True)
+    os.makedirs(output_dir, exist_ok=True)
     
     extract_saz_file(saz_file_path, extract_to_folder)
     
     index_file_path = os.path.join(extract_to_folder, '_index.htm')
-    
     results = parse_index_file(index_file_path)
     
     df = pd.DataFrame(results)
     
-    output_path = 'filtered_results.xlsx'
+    # Ensure required columns exist
+    required_columns = ['Process', 'x-hostip', 'https-client-snihostname']
+    for col in required_columns:
+        if col not in df.columns:
+            df[col] = None
+    
+    output_path = os.path.join(output_dir, 'filtered_results.xlsx')
     df.to_excel(output_path, index=False)
-
-    print(f"The results have been recorded in {output_path}")
+    print(f"Results saved to: {output_path}")
+    return output_path
 
 if __name__ == '__main__':
     # This block only runs if the script is run directly

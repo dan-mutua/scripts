@@ -21,11 +21,15 @@ print(f"Total URLs fetched: {len(flat_urls)}")
 excel_path = r"C:\scripts\filtered_results.xlsx"
 try:
     df = pd.read_excel(excel_path)
+    if 'https-client-snihostname' not in df.columns:
+        print("Warning: Required column 'https-client-snihostname' not found")
+        df['https-client-snihostname'] = None
 except FileNotFoundError:
-    print(f"Excel file not found at {excel_path}. Creating a new file...")
-    df = pd.DataFrame(columns=['https-client-snihostname'])
-    df.to_excel(excel_path, index=False)
-    print(f"Created new Excel file at {excel_path}")
+    print(f"Excel file not found at {excel_path}")
+    df = pd.DataFrame({'https-client-snihostname': []})
+except Exception as e:
+    print(f"Error reading Excel file: {e}")
+    df = pd.DataFrame({'https-client-snihostname': []})
 
 def check_hostname(hostname):
     if not isinstance(hostname, str):
@@ -41,7 +45,7 @@ def check_hostname(hostname):
     
     for _ in range(3):
         dot_index = hostname.find('.', start_index)
-        if dot_index == -1:
+        if (dot_index == -1):
             break
         dot_positions.append(dot_index)
         start_index = dot_index + 1
