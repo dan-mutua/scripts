@@ -1,5 +1,0 @@
-tkinter
-requests
-pandas
-colorama
-openpyxl
