@@ -1,0 +1,6 @@
+requests
+pandas
+colorama
+beautifulsoup4
+openpyxl
+tkinter
