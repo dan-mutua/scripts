@@ -4,16 +4,16 @@ import os
 import tkinter as tk
 from tkinter import filedialog, messagebox
 
-def update_zap_path(zap_path):
-    """Update the ZAP file path in index.py"""
+def update_saz_path(saz_path):
+    """Update the saz file path in index.py"""
     index_path = os.path.join(os.path.dirname(__file__), 'index.py')
     
     with open(index_path, 'r') as file:
         content = file.read()
         
     updated_content = content.replace(
-        'ZAP_FILE_PATH = r"..."', 
-        f'ZAP_FILE_PATH = r"{zap_path}"'
+        'saz_FILE_PATH = r"..."', 
+        f'saz_FILE_PATH = r"{saz_path}"'
     )
     
     with open(index_path, 'w') as file:
@@ -36,22 +36,22 @@ def main():
     root.title("Fiddler Tool")
     root.geometry("400x200")
     
-    label = tk.Label(root, text="Please select your .zap file to begin analysis:")
+    label = tk.Label(root, text="Please select your .saz file to begin analysis:")
     label.pack(pady=20)
     
     def select_file():
         file_path = filedialog.askopenfilename(
-            title="Select ZAP File",
+            title="Select SAZ File",
             filetypes=[
-                ("ZAP files", "*.zap"),
+                ("saz files", "*.saz"),
                 ("All files", "*.*")  
             ],
-            defaultextension=".zap"
+            defaultextension=".saz"
         )
         if file_path:
             root.destroy()
             try:
-                update_zap_path(file_path)
+                update_saz_path(file_path)
                 
                 scripts = [
                     'index.py',
@@ -81,7 +81,7 @@ def main():
     
     select_button = tk.Button(
         root,
-        text="Select ZAP File",
+        text="Select saz File",
         command=select_file
     )
     select_button.pack(pady=20)
